@@ -13,6 +13,10 @@
     'use strict';
     console.info("Filtering Tweakers.Net");
 
+    // Logging toggles
+    let logRulesEnabled = true; // Print rules in logging
+    let logHitsEnabled = true; // Hits is when a filter is triggered and the news is deleted.
+
     const RuleName = {
         CASE_SENSITIVE: 'CASE_SENSITIVE',
         CASE_INSENSITIVE: 'CASE_INSENSITIVE',
@@ -20,7 +24,7 @@
         CASE_SENSITIVE_END: 'CASE_SENSITIVE_END'
     };
 
-    const filters = [
+    const filterRules = [
         [RuleName.CASE_SENSITIVE_START, "Gerucht"],
         [RuleName.CASE_INSENSITIVE, "musk"],
         [RuleName.CASE_INSENSITIVE, "trump"],
@@ -29,12 +33,7 @@
         [RuleName.CASE_SENSITIVE, " X "]
     ];
 
-    // Log filters to the console
-    console.info(`Rules:`);
-    filters.forEach(([rulename, value]) => {
-        console.info(` ${rulename}: "${value}"`);
-    });
-
+    if (logRulesEnabled) logRules(filterRules);
 
     // Query the DOM once and store the results
     const anchors = document.querySelectorAll('div.headlineItem.news.useVisitedState a');
@@ -43,24 +42,32 @@
     const anchorArray = Array.from(anchors);
 
     // Process each anchor element only once
-    console.info(`Processing:`);
+    if (logHitsEnabled) console.info(`Processing:`);
     for (let i = 0; i < anchorArray.length; i++) {
         const anchor = anchorArray[i];
         let textContent = anchor.textContent.trim();
 
-        if (shouldFilterAnchor(textContent, filters)) {
+        if (shouldFilterAnchor(textContent, filterRules)) {
             anchor.closest('div.headlineItem.news.useVisitedState')?.remove();
         }
     }
 
-    function logRuleInfo(rulename, keyword, textContent) {
-        console.info(` HIT - ${rulename}: "${keyword}" - "${textContent}"`);
+    // Log filterRules to the console
+    function logRules(rules) {
+        console.info(`Rules:`);
+        filterRules.forEach(([rulename, value]) => {
+            console.info(` ${rulename}: "${value}"`);
+        });
     }
 
-    function shouldFilterAnchor(textContent, filters) {
+    function logRuleInfo(rulename, keyword, textContent) {
+        if (logHitsEnabled) console.info(` HIT - ${rulename}: "${keyword}" - "${textContent}"`);
+    }
+
+    function shouldFilterAnchor(textContent, filterRules) {
         let textContentLowerCase = null;
-        for (let j = 0; j < filters.length; j++) {
-            const [rulename, keyword] = filters[j];
+        for (let j = 0; j < filterRules.length; j++) {
+            const [rulename, keyword] = filterRules[j];
             if (rulename === RuleName.CASE_SENSITIVE && textContent.includes(keyword)) {
                 logRuleInfo(rulename, keyword, textContent);
                 return true;
