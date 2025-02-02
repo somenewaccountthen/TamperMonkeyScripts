@@ -4,7 +4,7 @@
 // @version      28-01-2025
 // @description  Remove unwanted items
 // @author       You
-// @match        https://tweakers.net/
+// @match        https://tweakers.net/*
 // @icon         https://tweakers.net/favicon.ico
 // @grant        none
 // ==/UserScript==
@@ -14,20 +14,28 @@
     console.info("Filtering Tweakers.Net");
 
     const RuleName = {
-    CASE_SENSITIVE: 'CASE_CENSITIVE',
-    CASE_INSENSITIVE: 'CASE_INSENSITIVE'
+    CASE_SENSITIVE: 'CASE_SENSITIVE',
+    CASE_INSENSITIVE: 'CASE_INSENSITIVE',
+    CASE_SENSITIVE_START: 'CASE_SENSITIVE_START',
+    CASE_SENSITIVE_END: 'CASE_SENSITIVE_END'
     };
 
     const filters = [
         [RuleName.CASE_SENSITIVE, "Gerucht"],
         [RuleName.CASE_INSENSITIVE, "musk"],
-        [RuleName.CASE_INSENSITIVE, "trump"]
+        [RuleName.CASE_INSENSITIVE, "trump"],
+        [RuleName.CASE_SENSITIVE_START, "X "],
+        [RuleName.CASE_SENSITIVE_END, " X"],
+        [RuleName.CASE_SENSITIVE, " X "]
+        // [RuleName.CASE_INSENSITIVE_START, "X.com "],
+        // [RuleName.CASE_INSENSITIVE_END, " X.com"],
+        // [RuleName.CASE_INSENSITIVE, " X.com "]
     ];
 
 
     // Log filters to the console
     filters.forEach(([ruleName, value]) => {
-    console.info(`${ruleName}: ${value}`);
+        console.info(`${ruleName}: "${value}"`);
     });
 
     // Query the DOM once and store the results
@@ -53,6 +61,16 @@
             } else if (rulename === RuleName.CASE_INSENSITIVE) {
                 if (!lowerTextContent) lowerTextContent = textContent.toLowerCase();
                 if (lowerTextContent.includes(keyword.toLowerCase())) {
+                    anchor.closest('div.headlineItem.news.useVisitedState')?.remove();
+                    break;
+                }
+            } else if (rulename === RuleName.CASE_SENSITIVE_START) {
+                if (textContent.startsWith(keyword)) {
+                    anchor.closest('div.headlineItem.news.useVisitedState')?.remove();
+                    break;
+                }
+            } else if (rulename === RuleName.CASE_SENSITIVE_END) {
+                if (textContent.endsWith(keyword)) {
                     anchor.closest('div.headlineItem.news.useVisitedState')?.remove();
                     break;
                 }
