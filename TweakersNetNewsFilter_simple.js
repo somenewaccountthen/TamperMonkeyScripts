@@ -11,21 +11,21 @@
 
 (function() {
     'use strict';
-    document.querySelectorAll('div.headlineItem.news.useVisitedState a').forEach(anchor => {
+    document.querySelectorAll('div.headlineItem a').forEach(anchor => {
         if (anchor.textContent.includes("Gerucht")) {
-            anchor.closest('div.headlineItem.news.useVisitedState').remove();
+            anchor.closest('div.headlineItem').remove();
         }
     });
 
-    document.querySelectorAll('div.headlineItem.news.useVisitedState a').forEach(anchor => {
+    document.querySelectorAll('div.headlineItem a').forEach(anchor => {
         if (anchor.textContent.toLowerCase().includes("trump")) {
-            anchor.closest('div.headlineItem.news.useVisitedState').remove();
+            anchor.closest('div.headlineItem').remove();
         }
     });
 
-    document.querySelectorAll('div.headlineItem.news.useVisitedState a').forEach(anchor => {
+    document.querySelectorAll('div.headlineItem a').forEach(anchor => {
         if (anchor.textContent.toLowerCase().includes("musk")) {
-            anchor.closest('div.headlineItem.news.useVisitedState').remove();
+            anchor.closest('div.headlineItem').remove();
         }
     });
 })();
