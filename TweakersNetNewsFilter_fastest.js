@@ -36,7 +36,7 @@
     if (logRulesEnabled) logRules(filterRules);
 
     // Query the DOM once and store the results
-    const anchors = document.querySelectorAll('div.headlineItem.news.useVisitedState a');
+    const anchors = document.querySelectorAll('div.headlineItem a');
 
     // Convert NodeList to Array for easier manipulation
     const anchorArray = Array.from(anchors);
@@ -46,33 +46,34 @@
     for (let i = 0; i < anchorArray.length; i++) {
         const anchor = anchorArray[i];
         let textContent = anchor.textContent.trim();
-
         if (shouldFilterAnchor(textContent, filterRules)) {
-            anchor.closest('div.headlineItem.news.useVisitedState')?.remove();
+            anchor.closest('div.headlineItem')?.remove();
         }
     }
 
-    // Log filterRules to the console
+    // Log filter rules to the console
     function logRules(rules) {
         console.info(`Rules:`);
-        filterRules.forEach(([rulename, value]) => {
-            console.info(` ${rulename}: "${value}"`);
+        rules.forEach(([rulename, value]) => {
+            console.info(`  ${rulename}: "${value}"`);
         });
     }
 
+    // Log rule information when a hit is detected
     function logRuleInfo(rulename, keyword, textContent) {
-        if (logHitsEnabled) console.info(` HIT - ${rulename}: "${keyword}" - "${textContent}"`);
+        if (!logHitsEnabled) return;
+        console.info(`  HIT - ${rulename}: "${keyword}" - "${textContent}"`);
     }
 
+    // Determine if an anchor should be filtered based on the rules
     function shouldFilterAnchor(textContent, filterRules) {
-        let textContentLowerCase = null;
+        let textContentLowerCase = textContent.toLowerCase();
         for (let j = 0; j < filterRules.length; j++) {
             const [rulename, keyword] = filterRules[j];
             if (rulename === RuleName.CASE_SENSITIVE && textContent.includes(keyword)) {
                 logRuleInfo(rulename, keyword, textContent);
                 return true;
             } else if (rulename === RuleName.CASE_INSENSITIVE) {
-                if (!textContentLowerCase) textContentLowerCase = textContent.toLowerCase();
                 if (textContentLowerCase.includes(keyword.toLowerCase())) {
                     logRuleInfo(rulename, keyword, textContent);
                     return true;
