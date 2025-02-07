@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove items based on text 3
 // @namespace    http://tampermonkey.net/
-// @version      28-01-2025
+// @version      07-02-2025
 // @description  Remove unwanted items
 // @author       You
 // @match        https://tweakers.net/*
